@@ -28,8 +28,8 @@ const Table = ({ dataSet, handleEdit }) => {
             <table className="table">
                 <thead className="bg-primary text-white">
                     <tr>
-                        <th scope="col">name</th>
-                        <th scope="col">value</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Value</th>
                         <th>Edit</th>
                     </tr>
                 </thead>
