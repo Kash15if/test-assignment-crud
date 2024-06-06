@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 
 const Form = ({ data, addEmployee, editEmployee }) => {
 
-    const [values, setValues] = useState("");
-    const [updateFormButton, setUpdateFormButton] = useState(false);
+
+    const [values, setValues] = useState(""); //form datas
+    const [updateFormButton, setUpdateFormButton] = useState(false); //bool val,true if update selected and false for insert button
 
     useEffect(() => {
         const p = {
@@ -11,26 +12,32 @@ const Form = ({ data, addEmployee, editEmployee }) => {
             value: data.value,
         };
         setValues(p);
-        console.log(p, p.name !== '', p.name)
+        //checking if its update or insert call
         setUpdateFormButton(p.name !== "");
 
     }, [data]);
 
+
+    //tracking changes in the employee form
     const handleInput = (e) => {
         var { name, value } = e.target;
         setValues({
             ...values,
             [name]: value,
         });
-        console.log(values);
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
 
-        addEmployee();
+    //insert new employee button clicked to add one
+    const handleSubmit = () => {
+        addEmployee(values);
 
     };
+
+    //updating the existing one with name as primary key
+    const handleUpdate = () => {
+        editEmployee(values);
+    }
 
     const clearField = () => {
         const p = {
@@ -41,10 +48,6 @@ const Form = ({ data, addEmployee, editEmployee }) => {
         setUpdateFormButton(false);
     }
 
-    const handleUpdate = (e) => {
-        e.preventDefault();
-        editEmployee();
-    }
 
     return (
         <div className="col-md-4 col-sm-12 container p-5 bg-light border rounded-3">
@@ -53,21 +56,32 @@ const Form = ({ data, addEmployee, editEmployee }) => {
                     <label for="exampleInputEmail1" className="form-label">
                         Name
                     </label>
-                    <input
+                    {updateFormButton ? <input
                         type="text"
                         className="form-control"
-                        id="exampleInputEmail1"
+                        id="dis_name"
                         aria-describedby="emailHelp"
                         value={values.name}
                         name="name"
-                        onChange={handleInput}
-                    />
+                        disabled
+                    /> :
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="name"
+                            value={values.name}
+                            name="name"
+                            onChange={handleInput}
+
+                        />}
                 </div>
 
                 <div
                     className="mb-3">
                     <label className="form-label">Value</label>
                     <input
+                        id="value"
+                        type="number"
                         className="form-control"
                         value={values.value}
                         onChange={handleInput}
@@ -78,9 +92,9 @@ const Form = ({ data, addEmployee, editEmployee }) => {
 
                 <div className="text-center mb-3">
                     {updateFormButton ?
-                        <button className="btn btn-success">
+                        <button onClick={() => handleUpdate()} className="btn btn-success">
                             Update
-                        </button> : <button className="btn btn-success">
+                        </button> : <button onClick={() => handleSubmit()} className="btn btn-success">
                             Create
                         </button>
                     }

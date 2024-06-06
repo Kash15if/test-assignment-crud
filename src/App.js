@@ -8,43 +8,8 @@ import Table from './Components/Tables';
 
 function App() {
 
-  useEffect(() => {
-    //get data fun call
-  }, [])
 
-
-  const [data, setData] = useState({
-    name: "",
-    value: "",
-  });
-
-  const [dataSet, setDataSet] = useState([{
-    "name": "Maryanne",
-    "value": "0382597494"
-  }, {
-    "name": "Nessi",
-    "value": "2754979980"
-  }, {
-    "name": "Pippa",
-    "value": "2462169067"
-  }, {
-    "name": "Bette-ann",
-    "value": "9437205477"
-  }, {
-    "name": "Ethan",
-    "value": "2846190070"
-  }, {
-    "name": "Shanta",
-    "value": "3364600058"
-  }, {
-    "name": "Celle",
-    "value": "6151023722"
-  }, {
-    "name": "Carolus",
-    "value": "7075132164"
-  }])
-
-
+  //apis start ----------------------------------------------------------------------------------------
   async function getEmployees() {
     return fetch("/employees").then(response => response.json());
   }
@@ -65,31 +30,63 @@ function App() {
     });
   }
 
+  //apis end -------------------------------------------------------------------------------------------
+
+
+
+  //form data for update/insert employee
+  const [formData, setFormData] = useState({
+    name: "",
+    value: "",
+  });
+
+  //list of employees
+  const [dataSet, setDataSet] = useState()
+
+  //getting the employees for the first time when page loads
+  useEffect(() => {
+    //get data fun call
+    (async () => {
+      let employeesData = await getEmployees();
+      setDataSet(employeesData)
+    })()
+  }, [])
+
+
+
+  //when edit row button clicked in the table, it will fill the form data to the same for edit
   const onChangeOrEdit = (val) => {
-    setData({ ...val });
+    setFormData({ ...val });
   };
 
 
-  const addEmployee = async () => {
-    // await createEmployee(data);
-    // await getEmployees()
-    // console.log(data)
-    setData({ name: "", value: "" })
+  //submit button clickedin the form
+  const addEmployee = async (inputs) => {
+    //calling add employee api
+    await createEmployee(inputs);
+
+    //getting the updated data back
+    let employeesData = await getEmployees();
+    setDataSet(employeesData)
+    setFormData({ name: "", value: "" })
   }
 
 
-  const editEmployee = async () => {
-    // await updateEmployee(data);
-    // await getEmployees()
-    // console.log(data)
-    setData({ name: "", value: "" })
+  const editEmployee = async (inputs) => {
+    //updating the data in the db
+    await updateEmployee(inputs);
+
+    //getting the updated data back
+    let employeesData = await getEmployees();
+    setDataSet(employeesData)
+    setFormData({ name: "", value: "" })
   }
 
   return (
     <div className="App">
       <div className="container p-5 bg-light border rounded-3">
         <div className="row">
-          <Form data={data} addEmployee={addEmployee} editEmployee={editEmployee}></Form>
+          <Form data={formData} addEmployee={addEmployee} editEmployee={editEmployee}></Form>
           <Table handleEdit={onChangeOrEdit} dataSet={dataSet}></Table>
         </div>
       </div>
